@@ -1,0 +1,21 @@
+on: [push]
+
+jobs:
+  native_build:
+    runs-on: ubuntu-latest
+    name: Build native Quarkus app
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@master
+      - name: Setup GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '17'      # See 'Options' section below for all supported versions
+          distribution: 'graalvm-community' # See 'Options' section below for all available distributions
+          cache: 'gradle'
+          components: 'native-image'
+          native-image-job-reports: 'true'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build native executable
+        run: |
+          sh gradlew build -Dquarkus.package.type=native
